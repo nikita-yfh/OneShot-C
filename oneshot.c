@@ -1265,9 +1265,7 @@ int main(int argc, char **argv) {
 	}
 	if(input.mtk_fix) {
 		chmod("/dev/wmtWifi", 0644);
-		FILE *f = fopen("/dev/wmtWifi", "w");
-		fputc("1", f);
-		fclose(f);
+		system("echo 1 > /dev/wmtWifi");
 	}
 		
 		
