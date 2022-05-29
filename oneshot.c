@@ -1099,6 +1099,7 @@ typedef struct {
 	int write;
 	int iface_down;
 	int verbose;
+	int mtk_fix;
 	const char *vuln_list_path;
 	int loop;
 	int reverse_scan;
@@ -1116,6 +1117,7 @@ void default_input(input_t *input) {
 	input->write=0;
 	input->iface_down=0;
 	input->verbose=0;
+	input->mtk_fix=0;
 	input->loop=0;
 	input->reverse_scan=0;
 	input->vuln_list_path="vulnwsc.txt";
@@ -1153,6 +1155,7 @@ void print_help() {
 		"    --iface-down             : Down network interface when the work is finished\n"
 		"    -l, --loop               : Run in a loop\n"
 		"    -v, --verbose            : Verbose output\n"
+		"    -m, --mtk-fix            : MTK interface fix, turn off Wi-Fi to use this\n"
 		"    -r, --reverse-scan       : Reverse sorting of networks in the scan. Useful on small displays\n\n"
 
 		"Example:\n"
@@ -1183,6 +1186,7 @@ int main(int argc, char **argv) {
 		{"loop",			no_argument,		NULL,'l'},
 		{"reverse-scan",	no_argument,		NULL,'r'},
 		{"iface-down",		no_argument,		NULL,OPT_IFACE_DOWN},
+		{"mtk-fix",			no_argument,		NULL,'m'},
 		{"vuln-list",		required_argument,	NULL,OPT_VULN_LIST},
 		{"help",			no_argument,		NULL,'h'},
 		{NULL, 0, NULL, 0}
@@ -1247,6 +1251,9 @@ int main(int argc, char **argv) {
 		case OPT_IFACE_DOWN:
 			input.iface_down=1;
 			break;
+		case 'm':
+			input.mtk_fix=1;
+			break;
 		case 'h':
 			print_help();
 			return -1;
@@ -1256,6 +1263,14 @@ int main(int argc, char **argv) {
 		print_help();
 		return -1;
 	}
+	if(input.mtk_fix) {
+		chmod("/dev/wmtWifi", 0644);
+		FILE *f = fopen("/dev/wmtWifi", "w");
+		fputc("1", f);
+		fclose(f);
+	}
+		
+		
 	if(interface_set(input.interface,MODE_UP)) {
 		fprintf(stderr,"Unable to up interface %s\n",input.interface);
 		return -1;
