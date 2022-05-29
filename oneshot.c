@@ -1171,7 +1171,7 @@ int main(int argc, char **argv) {
 		OPT_IFACE_DOWN=CHAR_MAX+1,
 		OPT_VULN_LIST
 	};
-	const char * short_options = "i:b:p:d:KFBXwvlrh";
+	const char * short_options = "i:b:p:d:KFBXwvlrmh";
 	const struct option long_options [] = {
 		{"interface",		required_argument,	NULL,'i'},
 		{"bssid",			required_argument,	NULL,'b'},
