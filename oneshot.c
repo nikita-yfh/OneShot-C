@@ -956,7 +956,7 @@ mac_t scan_wifi(const char *interface, char **vuln_list,int reverse_scan) {
 				network->security=SECURITY_WPA;
 			else if(network->security==SECURITY_WPA2)
 				network->security=SECURITY_WPA_WPA2;
-		} else if(strstr(str,"WPS"))
+		} else if(strstr(str,"WPS:"))
 			wps=1;
 		else if(strstr(str,"setup"))
 			sscanf(str,"* AP setup locked: 0x%x",&network->wps_locked);
@@ -990,7 +990,7 @@ mac_t scan_wifi(const char *interface, char **vuln_list,int reverse_scan) {
 		int i=0;
 		if(reverse_scan)
 			i=network_count-1;
-		while(i!=(reverse_scan?0:network_count-1)) {
+		while(i!=(reverse_scan?-1:network_count)) {
 			network_info_t *network=scanned+i;
 			const char *security;
 			switch(network->security) {
@@ -1310,3 +1310,4 @@ int main(int argc, char **argv) {
 	}
 	return 0;
 }
+
