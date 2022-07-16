@@ -893,7 +893,6 @@ typedef struct {
 	char essid[256];
 	int signal;
 	int security;
-	int wps;
 	int wps_locked;
 	char model[256];
 	char model_number[256];
@@ -919,6 +918,7 @@ mac_t scan_wifi(const char *interface, char **vuln_list,int reverse_scan) {
 	network_info_t *network=scanned-1;
 
 	int network_count=0;
+	int wps=1;
 
 	while(!feof(output)) {
 		char buf[1024];
@@ -929,8 +929,11 @@ mac_t scan_wifi(const char *interface, char **vuln_list,int reverse_scan) {
 			fprintf(stderr,"[!] Error: %s",str);
 			return NO_MAC;
 		} else if(strstr(str,"(on")) {
-			network++;
-			network_count++;
+			if(wps){
+				network++;
+				network_count++;
+				wps=0;
+			}
 			char bssid_str[18];
 			sscanf(str,"BSS %17s",bssid_str);
 			network->bssid=str2mac(bssid_str);
@@ -953,7 +956,9 @@ mac_t scan_wifi(const char *interface, char **vuln_list,int reverse_scan) {
 				network->security=SECURITY_WPA;
 			else if(network->security==SECURITY_WPA2)
 				network->security=SECURITY_WPA_WPA2;
-		} else if(strstr(str,"setup"))
+		} else if(strstr(str,"WPS"))
+			wps=1;
+		else if(strstr(str,"setup"))
 			sscanf(str,"* AP setup locked: 0x%x",&network->wps_locked);
 		else if(strstr(buf,"Model:"))
 			sscanf(str,"* Model: %[^\n]s",network->model);
@@ -963,7 +968,8 @@ mac_t scan_wifi(const char *interface, char **vuln_list,int reverse_scan) {
 			sscanf(str,"* Device name: %[^\n]s",network->device_name);
 	}
 	pclose(output);
-
+	if(!wps)
+		network_count--;
 	qsort(scanned,network_count,sizeof(network_info_t),compare_network_info);
 
 	if(network_count) {
