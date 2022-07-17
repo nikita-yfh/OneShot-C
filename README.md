@@ -11,6 +11,10 @@ OneShot-C - implementation of [OneShot](https://github.com/drygdryg/OneShot) on 
  - [Wpa supplicant](https://www.w1.fi/wpa_supplicant/);
  - [Pixiewps](https://github.com/wiire-a/pixiewps);
  - [iw](https://wireless.wiki.kernel.org/en/users/documentation/iw).
+# Compile
+ ```
+ make
+ ```
 ## Usage examples
 Start Pixie Dust attack on a specified BSSID:
  ```
